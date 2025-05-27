@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For You 💙</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to top right, #d9e8ff, #fef1ff);
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .frame-sticker {
+      position: fixed;
+      width: 100px;
+      z-index: 1;
+      opacity: 0.7;
+    }
+
+    .top-left { top: 0; left: 0; }
+    .top-right { top: 0; right: 0; }
+    .bottom-left { bottom: 0; left: 0; }
+    .bottom-right { bottom: 0; right: 0; }
+
+    .box {
+      background: white;
+      margin: 100px auto 50px auto;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 350px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 15px;
+      background-color: #8ecae6;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #219ebc;
+    }
+
+    input, textarea {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .photo-gallery {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      margin-bottom: 100px;
+    }
+
+    .photo-wrapper {
+      position: relative;
+      max-width: 300px;
+    }
+
+    .photo {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .photo-sticker {
+      position: absolute;
+      width: 60px;
+      z-index: 3;
+    }
+
+    .photo-sticker.top-right {
+      top: -15px;
+      right: -15px;
+    }
+
+    .photo-sticker.bottom-left {
+      bottom: -15px;
+      left: -15px;
+    }
+
+    .scroll-fade {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .scroll-fade.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Decorative Frame Stickers -->
+  <img src="assets/sticker7.png" class="frame-sticker top-left">
+  <img src="assets/sticker8.png" class="frame-sticker top-right">
+  <img src="assets/sticker9.png" class="frame-sticker bottom-left">
+  <img src="assets/sticker10.png" class="frame-sticker bottom-right">
+  <img src="assets/sticker11.png" class="frame-sticker" style="top: 40%; left: 0;">
+  <img src="assets/sticker12.png" class="frame-sticker" style="top: 40%; right: 0;">
+
+  <div class="box" id="box">
+    <h2 onclick="next()">Hi honey~</h2>
+    <small>(Click / Tap anywhere to start)</small>
+  </div>
+
+  <audio id="bgMusic" src="assets/songforu.mp3" preload="auto" loop></audio>
+
+  <div class="scroll-fade">
+    <h2 style="text-align: center;">Our Sweet Moments 💙</h2>
+    <div class="photo-gallery">
+      <div class="photo-wrapper scroll-fade">
+        <img src="assets/photo1.jpg" class="photo">
+        <img src="assets/sticker1.png" class="photo-sticker top-right">
+        <img src="assets/sticker2.png" class="photo-sticker bottom-left">
+      </div>
+      <div class="photo-wrapper scroll-fade">
+        <img src="assets/photo2.jpg" class="photo">
+        <img src="assets/sticker3.png" class="photo-sticker top-right">
+        <img src="assets/sticker4.png" class="photo-sticker bottom-left">
+      </div>
+      <div class="photo-wrapper scroll-fade">
+        <img src="assets/photo3.png" class="photo">
+        <img src="assets/sticker5.png" class="photo-sticker top-right">
+        <img src="assets/sticker6.png" class="photo-sticker bottom-left">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.body.addEventListener('click', () => {
+      const bgMusic = document.getElementById('bgMusic');
+      if (bgMusic && bgMusic.paused) {
+        bgMusic.play().catch(e => console.log("Autoplay error:", e));
+      }
+    });
+
+    const box = document.getElementById('box');
+    let answers = {};
+    let step = 0;
+
+    function next(response) {
+      step++;
+      switch (step) {
+        case 1:
+          box.innerHTML = `
+            <h2>How was your day?</h2>
+            <textarea id="q1" placeholder="Tell me honey~"></textarea>
+            <button onclick="next(document.getElementById('q1').value)">Next</button>`;
+          break;
+        case 2:
+          answers.q1 = response;
+          box.innerHTML = `
+            <h2>Did you miss me?</h2>
+            <button onclick="next('yes')">Yes honeyy I miss you</button>
+            <button onclick="next('no')">No I didn’t miss you at all</button>`;
+          break;
+        case 3:
+          if (response === 'yes') {
+            answers.q2 = response;
+            next();
+          } else {
+            answers.q2 = 'no (joking)';
+            box.innerHTML = `
+              <h2>You really didn’t miss me?</h2>
+              <button onclick="next('just kidding')">Just kidding honeyy, I miss u so much</button>`;
+            step--; // Stay at step 3 after this
+          }
+          break;
+        case 4:
+          box.innerHTML = `<h2>From 1 ~ 5, how much do you miss me?</h2>`;
+          for (let i = 1; i <= 5; i++) {
+            box.innerHTML += `<button onclick="rate(${i})">${i}</button>`;
+          }
+          break;
+      }
+    }
+
+    function rate(val) {
+      answers.q3 = val;
+      let msg = "";
+      switch (val) {
+        case 5: msg = "My love is bigger than the ocean (✨)"; break;
+        case 4: msg = "I miss you too, for real~"; break;
+        case 3: msg = "Only 3...? (😐)"; break;
+        case 2: msg = "Honey? Are you joking? (😠)"; break;
+        case 1: msg = "Fine, let's end this question here 🐱😾"; break;
+      }
+      box.innerHTML = `<h2>${msg}</h2><button onclick="nextQA()">Next</button>`;
+    }
+
+    let qaStep = 0;
+    function nextQA() {
+      qaStep++;
+      switch (qaStep) {
+        case 1:
+          box.innerHTML = `<h2>How do you feel about me while we play together?</h2>
+            <textarea id="qa1"></textarea>
+            <button onclick="saveQA('qa1')">Next</button>`;
+          break;
+        case 2:
+          box.innerHTML = `<h2>Did you enjoy our time together?</h2>
+            <textarea id="qa2"></textarea>
+            <button onclick="saveQA('qa2')">Next</button>`;
+          break;
+        case 3:
+          box.innerHTML = `<h2>Your opinion about me in this game, honey~?</h2>
+            <textarea id="qa3"></textarea>
+            <button onclick="saveQA('qa3')">Next</button>`;
+          break;
+        case 4:
+          box.innerHTML = `<h2>Do you know my real name already?</h2>
+            <textarea id="qa4"></textarea>
+            <button onclick="saveQA('qa4', true)">Submit</button>`;
+          break;
+      }
+    }
+
+    function saveQA(id, last = false) {
+      answers[id] = document.getElementById(id).value;
+      if (last) {
+        submitToDiscord();
+      } else {
+        nextQA();
+      }
+    }
+
+    function submitToDiscord() {
+      const content = Object.entries(answers).map(([key, val]) => `**${key}**: ${val}`).join("\n");
+      fetch("https://discord.com/api/webhooks/1376861490149195917/rl_axJHrhC_tepwzsxdLrVHtwCqijXL4M10JUYdw5KlvK0l5_x3y22Y23O4euKCuCKXO", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content })
+      }).then(() => {
+        box.innerHTML = `<h2>Thank you honeyy 💌</h2><p>All your answers have been sent 💙</p>`;
+      }).catch(() => {
+        box.innerHTML = `<h2>Oops, something went wrong!</h2>`;
+      });
+    }
+
+    // Scroll animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.scroll-fade').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
